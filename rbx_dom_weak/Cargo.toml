@@ -15,10 +15,15 @@ authors = [
 edition = "2018"
 
 [dependencies]
-rbx_types = { version = "3.1.0", path = "../rbx_types", features = ["serde"] }
+# Canonical property identity relies on this reviewed typed serialization schema. Use the
+# published release rather than the unreleased sibling crate, whose CFrame rotation
+# encoding and dependency versions differ, so Git consumers keep one rbx_types identity
+# with published rbx_binary and rbx_xml.
+rbx_types = { version = "=3.1.0", features = ["serde"] }
 ustr = { version = "1.1.0", features = ["serde"] }
 
 ahash = "0.8.11"
+rmp-serde = "=1.3.1"
 serde = "1.0.137"
 
 [dev-dependencies]

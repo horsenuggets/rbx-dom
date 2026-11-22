@@ -1,9 +1,9 @@
 name: Luau Linting
 on:
   push:
-    branches: "master"
+    branches: "main"
   pull_request:
-    branches: "master"
+    branches: "main"
     paths: ["*.lua", "*.luau"]
 jobs: 
   Lint:

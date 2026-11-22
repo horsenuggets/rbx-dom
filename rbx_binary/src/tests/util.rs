@@ -1,6 +1,6 @@
 use std::{fs, path::Path};
 
-use rbx_dom_weak::DomViewer;
+use rbx_dom_weak::{DomViewer, PropertyPool};
 
 use crate::{from_reader, text_deserializer::DecodedModel, to_writer};
 
@@ -28,7 +28,7 @@ pub fn run_model_base_suite(model_path: impl AsRef<Path>) {
 
     // Decode the test file and snapshot a stable version of the resulting tree.
     // This should properly test the deserializer.
-    let decoded = from_reader(contents.as_slice()).unwrap();
+    let mut decoded = from_reader(contents.as_slice()).unwrap();
     let decoded_viewed = DomViewer::new().view_children(&decoded);
     insta::assert_yaml_snapshot!(format!("{}__decoded", model_stem), decoded_viewed);
 
@@ -37,6 +37,12 @@ pub fn run_model_base_suite(model_path: impl AsRef<Path>) {
     let top_level_ids = decoded_root.children();
     let mut encoded = Vec::new();
     to_writer(&mut encoded, &decoded, top_level_ids).unwrap();
+
+    let mut pool = PropertyPool::default();
+    decoded.share_properties(&mut pool);
+    let mut shared_encoded = Vec::new();
+    to_writer(&mut shared_encoded, &decoded, decoded.root().children()).unwrap();
+    assert_eq!(shared_encoded, encoded);
 
     // ...but we can snapshot the text representation of what we encoded! In an
     // ideal world, this would be very similar or the same as the text

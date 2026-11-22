@@ -7,7 +7,7 @@ mod places;
 
 use std::{fmt, fs, path::PathBuf};
 
-use rbx_dom_weak::DomViewer;
+use rbx_dom_weak::{DomViewer, PropertyPool};
 
 /// Runs several tests over the provided file.
 pub fn test_suite(path: PathBuf) -> Result<(), Error> {
@@ -22,7 +22,7 @@ pub fn test_suite(path: PathBuf) -> Result<(), Error> {
 
     let contents = fs::read(&path).map_err(|e| Error::new(e, "read"))?;
 
-    let decoded = crate::from_reader_default(contents.as_slice())
+    let mut decoded = crate::from_reader_default(contents.as_slice())
         .map_err(|e| Error::new(e, "deserialize"))?;
     insta::assert_yaml_snapshot!(
         format!("{test_name}__decoded"),
@@ -32,6 +32,13 @@ pub fn test_suite(path: PathBuf) -> Result<(), Error> {
     let mut encoded = Vec::new();
     crate::to_writer_default(&mut encoded, &decoded, decoded.root().children())
         .map_err(|e| Error::new(e, "serialize"))?;
+
+    let mut pool = PropertyPool::default();
+    decoded.share_properties(&mut pool);
+    let mut shared_encoded = Vec::new();
+    crate::to_writer_default(&mut shared_encoded, &decoded, decoded.root().children())
+        .map_err(|e| Error::new(e, "serialize shared properties"))?;
+    assert_eq!(shared_encoded, encoded);
 
     let encoded_text =
         std::str::from_utf8(&encoded).map_err(|e| Error::new(e, "display encoded"))?;

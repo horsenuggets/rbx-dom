@@ -10,3 +10,9 @@ members = [
 	"rbx_xml",
 	"rbx_util",
 ]
+
+# Workspace tests resolve rbx_dom_weak's published rbx_types requirement to this sibling.
+# Consumers don't inherit this patch, so only rbx_dom_weak is supported as a Git
+# dependency of this fork; use published rbx_binary and rbx_xml with it.
+[patch.crates-io]
+rbx_types = { path = "rbx_types" }
