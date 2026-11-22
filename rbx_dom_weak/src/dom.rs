@@ -4,7 +4,10 @@ use ahash::{AHashMap, AHashSet};
 use rbx_types::{Ref, UniqueId, Variant};
 use ustr::ustr;
 
-use crate::instance::{Instance, InstanceBuilder};
+use crate::{
+    instance::{Instance, InstanceBuilder},
+    PropertyPool,
+};
 
 /// Represents a DOM containing one or more Roblox instances.
 ///
@@ -83,6 +86,21 @@ impl WeakDom {
     /// the WeakDom.
     pub fn reserve(&mut self, additional: usize) {
         self.instances.reserve(additional);
+    }
+
+    /// Shares exactly identical property maps with other instances in this pool.
+    ///
+    /// Every explicit property and referent is preserved. Later mutations detach only
+    /// the affected instance's map. The caller owns the pool and must prune it after
+    /// destroying documents; this operation performs proportional maintenance before
+    /// and after its batch. Returns the number of visited instances, suitable as a
+    /// cleanup budget when this document is later destroyed.
+    pub fn share_properties(&mut self, pool: &mut PropertyPool) -> usize {
+        pool.share_all(
+            self.instances
+                .values_mut()
+                .map(|instance| &mut instance.properties),
+        )
     }
 
     /// Consumes the WeakDom, returning its underlying root ref and backing

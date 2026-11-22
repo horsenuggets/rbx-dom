@@ -1,5 +1,7 @@
 use rbx_types::{Ref, Variant};
-use ustr::{Ustr, UstrMap};
+use ustr::Ustr;
+
+use crate::Properties;
 
 /**
 Represents an instance that can be turned into a new
@@ -211,7 +213,9 @@ pub struct Instance {
     pub class: Ustr,
 
     /// Any properties stored on the object that are not `Name` or `ClassName`.
-    pub properties: UstrMap<Variant>,
+    ///
+    /// Assign an existing `UstrMap` with `.into()`. Mutable access detaches shared maps.
+    pub properties: Properties,
 }
 
 impl Instance {

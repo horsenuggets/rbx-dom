@@ -10,3 +10,6 @@ members = [
 	"rbx_xml",
 	"rbx_util",
 ]
+
+[patch.crates-io]
+rbx_types = { path = "rbx_types" }
