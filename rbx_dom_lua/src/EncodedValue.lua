@@ -117,7 +117,7 @@ types = {
 			local pos = pod.position
 			local orient = pod.orientation
 
-			--stylua: ignore
+			-- [styluau] ignore
 			return CFrame.new(
 				pos[1], pos[2], pos[3],
 				orient[1][1], orient[1][2], orient[1][3],
