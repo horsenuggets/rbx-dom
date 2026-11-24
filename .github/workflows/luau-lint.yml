@@ -4,12 +4,12 @@ on:
     branches: "main"
   pull_request:
     branches: "main"
-    paths: ["*.lua", "*.luau", "aftman.toml", "styluau.toml", ".github/workflows/luau-lint.yml"]
+    paths: ["**/*.lua", "**/*.luau", "aftman.toml", "styluau.toml", ".github/workflows/luau-lint.yml"]
 jobs: 
   Lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ok-nick/setup-aftman@v0.4.2
       
       - name: Run Selene
